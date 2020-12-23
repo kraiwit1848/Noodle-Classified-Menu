@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 import imutils
 
-def FindMenuImageContours():
+def FindMenuImageContours(im):
     low = 0
     high = 80
     img = cv2.inRange(im,(low,low,low),(high,high,high))
@@ -72,10 +72,10 @@ def Find_XY(n):
 
     return x1 , y1 , x2 , y2 , Width , Length
 
-def Find_Degree():
+def Find_Degree(im):
     degree = 0
      
-    n = FindMenuImageContours()
+    n = FindMenuImageContours(im)
     # find (x1,y1) and (x2,y2)
     x1 , y1 , x2 , y2 , _ , _= Find_XY(n)
     c = im.shape[1]
@@ -159,36 +159,36 @@ def Find_Circle(Menu):
     circle = np.array(circle).astype(np.uint8)
     return circle
 
+def preprocess(im):
+    # im = cv2.imread("image_Full_Menu/image_99.jpg")
 
-im = cv2.imread("image_Full_Menu/image_99.jpg")
+    # Straighten the picture (ปรับองศาของรูปภาพให้ตรง)
+    im = imutils.rotate(im, Find_Degree(im))
 
-# Straighten the picture (ปรับองศาของรูปภาพให้ตรง)
-im = imutils.rotate(im, Find_Degree())
+    # find Width , Length
+    n = FindMenuImageContours(im)
+    x , y , _ , _ , Menu_Width , Menu_Length = Find_XY(n)
 
-# find Width , Length
-n = FindMenuImageContours()
-x , y , _ , _ , Menu_Width , Menu_Length = Find_XY(n)
+    # crop image
+    Menu = im[ x : x + Menu_Width ,y : y + Menu_Length ]
 
-# crop image
-Menu = im[ x : x + Menu_Width ,y : y + Menu_Length ]
+    # Fixed the size  (ปรับขนาดของภาพให้คงที่)
+    # Menu = cv2.resize(Menu,(1344,1512))
+    Menu = cv2.resize(Menu,(920,1980))
+    # cv2.imshow('Menu',Menu)
 
-# Fixed the size  (ปรับขนาดของภาพให้คงที่)
-# Menu = cv2.resize(Menu,(1344,1512))
-Menu = cv2.resize(Menu,(920,1980))
-# cv2.imshow('Menu',Menu)
+    # find Circle on image (หาจำนวนวงกลมทั้งหมดที่มีในรูปภาพ โดยทำการเร็งเฉพาะตามตำแหน่งที่ได้ตั้งค่าไว้)
+    Circle = Find_Circle(Menu)
+    # print(len(Circle))
+    # !!!!!!!!!!!!!!!!!!!!!!! แค่จะโชว์ออกมาดูเฉยๆๆๆๆๆ ไม่มีความสำคัญเลยจ้าาาาาาา !!!!!!!!!!!!!!!!!!!!!!!!
+    # for i in range(31,36):
+    #     cv2.imshow('Circle'+str(i),Circle[i])
 
-# find Circle on image (หาจำนวนวงกลมทั้งหมดที่มีในรูปภาพ โดยทำการเร็งเฉพาะตามตำแหน่งที่ได้ตั้งค่าไว้)
-Circle = Find_Circle(Menu)
+    # size = 1.2
+    # TARGET_SIZE = (int(Menu.shape[0]/(3.5*size)),int(Menu.shape[1]/size))
+    # image = cv2.resize(Menu,TARGET_SIZE)
+    # cv2.imshow('image',image)
 
-# !!!!!!!!!!!!!!!!!!!!!!! แค่จะโชว์ออกมาดูเฉยๆๆๆๆๆ ไม่มีความสำคัญเลยจ้าาาาาาา !!!!!!!!!!!!!!!!!!!!!!!!
-for i in range(31,36):
-    cv2.imshow('Circle'+str(i),Circle[i])
-
-size = 1.2
-TARGET_SIZE = (int(Menu.shape[0]/(3.5*size)),int(Menu.shape[1]/size))
-image = cv2.resize(Menu,TARGET_SIZE)
-cv2.imshow('image',image)
-
-
-cv2.waitKey(0)
-cv2.destroyAllWindows()
+    return Circle
+    # cv2.waitKey(0)
+    # cv2.destroyAllWindows()
