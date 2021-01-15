@@ -36,7 +36,7 @@ validation_generator = datagen.flow_from_dataframe(
     class_mode='other')
 
 
-inputIm = Input(shape = (75,75,3,))
+inputIm = Input(shape = (75,75,3))
 conv1 = Conv2D(32,3,activation='relu',padding = 'same')(inputIm)
 pool1 = MaxPool2D()(conv1)
 conv2 = Conv2D(64,3,activation='relu',padding = 'same')(pool1)
