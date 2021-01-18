@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 import imutils
-# from keras.models import load_model
+from keras.models import load_model
 
 def Mask_IMG(image):
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
@@ -98,7 +98,7 @@ def find_circle(img):
             
             # print(circles_new[0])
         else :
-            return False
+            return False , False
 
         Circle_data = []
         # image_number = 0
@@ -111,6 +111,7 @@ def find_circle(img):
             ROI = img[y:y+46, x:x+46]
             ROI = imutils.rotate(ROI, 90)
             # ROI = cv2.resize(ROI,(75,75))
+            ROI = cv2.cvtColor(ROI, cv2.COLOR_BGR2GRAY)
             Circle_data.append(ROI)
             # cv2.imwrite('test_save/ROI_{}.jpg'.format(image_number), ROI)
             # cv2.putText(img, str(count) ,(x,y),cv2.FONT_HERSHEY_PLAIN,2,(255,255,0),5)
@@ -125,10 +126,28 @@ img = find_square(image)
 top = find_top(img)
 close , Circle_data = find_circle(top)
 
-# model = load_model('Miracle.h5')
-# ANS = model.predict(Circle_data)
+model = load_model('Miracle_9398.h5')
+ANS = model.predict(Circle_data)
 # print(ANS)
+answer = ["เผ็ด0","เผ็ด1","เผ็ด2","เผ็ด3","ต้มยำ","ข้าวซอย","แกงเขียวหวาน","น้ำตก",
+"หม่าล่า","แกงเผ็ด","น้ำใส","น้ำเงี้ยว","น้ำยาป่า","ต้มยำ","ยำพริกเผา","ยำหม่าล่า","เตี๋ยวเรือ",
+"ยำมะนาว","ทรงเครื่อง","เส้นบุกขาว","เส้นแก้ว","วุ้นเส้น","เส้นบะหมี่หยก","เส้นราเมง","เส้นมาม่า",
+"เส้นเล็ก","เส้นใหญ่","เส้นบะหมี่","ปกติ","พิเศษ","จัมโบ้","ยักษ์","กลับบ้าน","ไม่ทานผัก","ทานที่ร้าน"]
 
+# usd check position in answer
+c = []
+menu = ""
+if close is not False:
+    for i in range(int(ANS.size/4)):
+        x = np.argmax(ANS[i])
+        # print(str(i)+">>>   ")
+        if x == 1 or x == 2 :
+            c.append(i)
+
+    for i in range(len(c)):
+        menu = menu + answer[c[i]]
+
+print(menu)
 # print(Circle_data.shape)
 
 # TARGET_SIZE = (int(1984/2),int(928/2))
