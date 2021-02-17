@@ -7,79 +7,88 @@ from keras.callbacks import Callback, ModelCheckpoint
 import matplotlib.pyplot as plt
 import pandas as pd
 import tensorflow as tf
+from My_Model import create_model
 
-BATCH_SIZE = 500
-IMAGE_SIZE = (46,46)
 
-dataframe = pd.read_csv('Data_ANS.csv', delimiter=',', header=0)
+file = "O1"
+
+BATCH_SIZE = 200
+IMAGE_SIZE = (60,60)
+
+dataframe = pd.read_csv('Data_ANS_'+file+'.csv', delimiter=',', header=0)
 
 datagen = ImageDataGenerator(rescale=1./255)
 
 train_generator = datagen.flow_from_dataframe(
-    dataframe=dataframe.loc[0:2100],
-    directory='images',
+    dataframe=dataframe.loc[0:699],
+    directory='images_'+file,
     x_col='FileName',    
     y_col='Class',
-    color_mode='grayscale',
+    # color_mode='grayscale',
     shuffle=True,
     target_size=IMAGE_SIZE,
     batch_size=BATCH_SIZE,
     class_mode='other')
-
+# color_mode='grayscale',
 validation_generator = datagen.flow_from_dataframe(
-    dataframe=dataframe.loc[2101:2399],
-    directory='images',
+    dataframe=dataframe.loc[700:799],
+    directory='images_'+file,
     x_col='FileName',
-    y_col='Class',
-    color_mode='grayscale',
+    y_col='Class',    
+    # color_mode='grayscale',
     shuffle=False,
     target_size=IMAGE_SIZE,
     batch_size=BATCH_SIZE,
     class_mode='other')
 
+model = create_model(IMAGE_SIZE[0],IMAGE_SIZE[1],3)
+# inputIm = Input(shape = (IMAGE_SIZE[0],IMAGE_SIZE[1],1))
+# conv1 = Conv2D(64,3,activation='relu',padding = 'same')(inputIm)
+# pool1 = MaxPool2D()(conv1)
+# conv2 = Conv2D(128,3,activation='relu',padding = 'same')(pool1)
+# # conv2 = BatchNormalization()(conv2)
+# # conv2 = Dropout(0.25)(conv2)
+# pool2 = MaxPool2D()(conv2)
 
-inputIm = Input(shape = (46,46,1))
-conv1 = Conv2D(64,3,activation='relu',padding = 'same')(inputIm)
-pool1 = MaxPool2D()(conv1)
-conv2 = Conv2D(128,3,activation='relu',padding = 'same')(pool1)
-# conv2 = BatchNormalization()(conv2)
-# conv2 = Dropout(0.25)(conv2)
-pool2 = MaxPool2D()(conv2)
+# conv3 = Conv2D(256,3,activation='relu',padding = 'same')(pool2)
+# # conv3 = BatchNormalization()(conv3)
+# conv3 = Dropout(0.25)(conv3)
+# pool3 = MaxPool2D()(conv3)
 
-conv3 = Conv2D(256,3,activation='relu',padding = 'same')(pool2)
-# conv3 = BatchNormalization()(conv3)
-conv3 = Dropout(0.25)(conv3)
-pool3 = MaxPool2D()(conv3)
-
-conv4 = Conv2D(128,3,activation='relu',padding = 'same')(pool3)
-# conv4 = Conv2D(64,3,activation='relu',padding = 'same')(conv4)
-conv4 = Dropout(0.25)(conv4)
+# conv4 = Conv2D(128,3,activation='relu',padding = 'same')(pool3)
+# # conv4 = Conv2D(64,3,activation='relu',padding = 'same')(conv4)
 # conv4 = Dropout(0.25)(conv4)
-pool4 = MaxPool2D()(conv4)
+# # conv4 = Dropout(0.25)(conv4)
+# pool4 = MaxPool2D()(conv4)
 
-# conv5 = Conv2D(64,3,activation='relu',padding = 'same')(pool4)
-# conv5 = Dropout(0.25)(conv5)
-# pool5 = MaxPool2D()(conv5)
+# # conv5 = Conv2D(64,3,activation='relu',padding = 'same')(pool4)
+# # conv5 = Dropout(0.25)(conv5)
+# # pool5 = MaxPool2D()(conv5)
 
-flat = Flatten()(pool4)
-dense1 = Dense(512,activation='relu')(flat)
-dense1 = Dropout(0.5)(dense1)
-dense1 = Dense(256,activation='relu')(dense1)
-dense1 = Dropout(0.5)(dense1)
-predictedW = Dense(4,activation='sigmoid')(dense1)
+# flat = Flatten()(pool4)
+# dense1 = Dense(512,activation='relu')(flat)
+# dense1 = Dropout(0.5)(dense1)
+# dense1 = Dense(256,activation='relu')(dense1)
+# dense1 = Dropout(0.5)(dense1)
+# predictedW = Dense(4,activation='sigmoid')(dense1)
 
-model = Model(inputs=inputIm, outputs=predictedW)
+# model = Model(inputs=inputIm, outputs=predictedW)
 
 
 model.summary()
 
-model.compile(optimizer = Adam(lr = 1e-4),
-              loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
-              metrics = ['accuracy'])
+# model.compile(optimizer = Adam(lr = 1e-4),
+#               loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
+#               metrics = ['accuracy'])
 
-checkpoint = ModelCheckpoint('Miracle.h5', verbose=1, monitor='val_accuracy',save_best_only=True, mode='max')
+# model.save('project_model')
+
+
 
 #Train Model
+
+checkpoint = ModelCheckpoint('model_weights_RGB_'+file, verbose=1, save_weights_only=True,monitor='val_accuracy',save_best_only=True, mode='max')
+# print(len(train_generator),len(validation_generator))
 model.fit_generator(
     train_generator,
     steps_per_epoch= len(train_generator),
