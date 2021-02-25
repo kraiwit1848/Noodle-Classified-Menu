@@ -10,7 +10,8 @@ import tensorflow as tf
 from My_Model import create_model
 
 
-file = "O1"
+# file = "O1"
+file = "000"
 
 BATCH_SIZE = 200
 IMAGE_SIZE = (60,60)
@@ -20,28 +21,28 @@ dataframe = pd.read_csv('Data_ANS_'+file+'.csv', delimiter=',', header=0)
 datagen = ImageDataGenerator(rescale=1./255)
 
 train_generator = datagen.flow_from_dataframe(
-    dataframe=dataframe.loc[0:699],
+    dataframe=dataframe.loc[0:1700],
     directory='images_'+file,
     x_col='FileName',    
     y_col='Class',
-    # color_mode='grayscale',
+    color_mode='grayscale',
     shuffle=True,
     target_size=IMAGE_SIZE,
     batch_size=BATCH_SIZE,
     class_mode='other')
-# color_mode='grayscale',
+
 validation_generator = datagen.flow_from_dataframe(
-    dataframe=dataframe.loc[700:799],
+    dataframe=dataframe.loc[1701:1952],
     directory='images_'+file,
     x_col='FileName',
     y_col='Class',    
-    # color_mode='grayscale',
+    color_mode='grayscale',
     shuffle=False,
     target_size=IMAGE_SIZE,
     batch_size=BATCH_SIZE,
     class_mode='other')
 
-model = create_model(IMAGE_SIZE[0],IMAGE_SIZE[1],3)
+model = create_model(IMAGE_SIZE[0],IMAGE_SIZE[1],1)
 # inputIm = Input(shape = (IMAGE_SIZE[0],IMAGE_SIZE[1],1))
 # conv1 = Conv2D(64,3,activation='relu',padding = 'same')(inputIm)
 # pool1 = MaxPool2D()(conv1)
@@ -87,7 +88,7 @@ model.summary()
 
 #Train Model
 
-checkpoint = ModelCheckpoint('model_weights_RGB_'+file, verbose=1, save_weights_only=True,monitor='val_accuracy',save_best_only=True, mode='max')
+checkpoint = ModelCheckpoint('model_weights_binary_'+file, verbose=1, save_weights_only=True,monitor='val_accuracy',save_best_only=True, mode='max')
 # print(len(train_generator),len(validation_generator))
 model.fit_generator(
     train_generator,

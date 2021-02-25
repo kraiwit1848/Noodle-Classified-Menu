@@ -6,6 +6,7 @@ from keras.models import load_model
 from preprocess import find_circle , find_top , find_square
 from My_Model import create_model
 from DataResult import addData , addData_SQLite
+# from raspberry_GPIO import sevenSegment           # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 # image = cv2.imread("image_Full_Menu/data20.jpg")
 image = cv2.imread("image_Full_Menu/image_91.jpg")

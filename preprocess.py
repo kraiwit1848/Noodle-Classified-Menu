@@ -108,31 +108,21 @@ def find_circle(img):
                 circles_new[0].append(row[i][j])
         circles_new = np.uint16(np.around(circles_new))
         
-
-        # image_number = 0
-        # count_check = 0
         for i in circles_new[0,:]:
             if img.shape[0]*0.13 < i[1] < img.shape[0]*0.85:
                 count += 1
-                # count_check += 1
                 x,y,_ = i
                 x = x - 30
                 y = y - 30
                 ROI = img[y:y+60, x:x+60]
                 ROI = imutils.rotate(ROI, 90)
-                # ROI = cv2.GaussianBlur(ROI,(3,3),0)
-                # ROI = cv2.medianBlur(ROI,7)
-
-                # ROI = cv2.resize(ROI,(75,75))
                 # ROI = cv2.cvtColor(ROI, cv2.COLOR_BGR2GRAY) # <<<<<<<<<<<<<<<<<<<<<<<<============
+                # _ , ROI = cv2.threshold(ROI, 80, 255, cv2.THRESH_BINARY)
 
                 # print(ROI)
                 Circle_data.append(ROI)
                 # cv2.circle(img, (i[0], i[1]), i[2], (0, 0, 255), 5)
                 # cv2.imwrite('test_save/data{}.jpg'.format(image_number), ROI)
                 # cv2.putText(img, str(count) ,(x,y),cv2.FONT_HERSHEY_PLAIN,2,(255,255,0),5)
-                # image_number += 1
-        # Circle_data = np.uint16(np.around(Circle_data))
 
-    # return in_range , blur , img ,hsv,Circle_data
     return img , Circle_data
