@@ -9,6 +9,7 @@ def sevenSegment(number):
     segment_pin = [[37,35,33,31],[32,36,38,40],[29,15,13,11]]
 
     GPIO.setmode(GPIO.BOARD)
+    GPIO.setwarnings(False)
 
     # set GPIO pin for show output
     for i in range(4):
