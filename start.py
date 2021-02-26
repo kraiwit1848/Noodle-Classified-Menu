@@ -1,7 +1,6 @@
 import cv2
 import numpy as np
 import imutils
-import mysql.connector
 from keras.models import load_model
 from preprocess import find_circle , find_top , find_square
 from My_Model import create_model
