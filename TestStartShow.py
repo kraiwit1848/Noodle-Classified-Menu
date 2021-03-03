@@ -3,6 +3,8 @@ import numpy as np
 import imutils
 # from keras.models import load_model
 
+
+
 def find_square(image):
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     BGR = cv2.cvtColor(gray, cv2.COLOR_GRAY2RGB)
@@ -134,7 +136,8 @@ def find_circle(img):
     return img , Circle_data , [in_range1,in_range2] , hsv
 
 
-image = cv2.imread("image_Full_Menu/image_91.jpg")
+
+image = cv2.imread("image_Full_Menu/image_90.jpg")
 
 img = find_square(image)
 top  = find_top(img)
@@ -144,16 +147,16 @@ TARGET_SIZE = (int(1984/2),int(928/2))
 # TARGET_SIZE = (992,464)
 
 # # use in_range1 for check 25 circle
-# inRange1 = cv2.resize(in_range[0],TARGET_SIZE)
-# cv2.imshow('in_range1', inRange1)
+inRange1 = cv2.resize(in_range[1],TARGET_SIZE)
+cv2.imshow('in_range1', inRange1)
 
 image = cv2.resize(image,TARGET_SIZE)
 cv2.imshow('image', image)
 
-# img = cv2.resize(img,TARGET_SIZE)
-# cv2.imshow('img', img)
+img = cv2.resize(img,TARGET_SIZE)
+cv2.imshow('img', img)
 
-# hsv = cv2.resize(hsv,TARGET_SIZE)
-# cv2.imshow('hsv', hsv)
+hsv = cv2.resize(hsv,TARGET_SIZE)
+cv2.imshow('hsv', hsv)
 
 cv2.waitKey()
