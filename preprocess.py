@@ -67,12 +67,13 @@ def find_circle(img):
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     BGR = cv2.cvtColor(gray, cv2.COLOR_GRAY2RGB)
     hsv = cv2.cvtColor(BGR, cv2.COLOR_BGR2HSV)
-    _ , in_range = cv2.threshold(hsv,73,255,cv2.THRESH_BINARY)
-    hsv = in_range
+    # _ , in_range1 = cv2.threshold(hsv,73,255,cv2.THRESH_BINARY)
+    _ , in_range1 = cv2.threshold(hsv,75,255,cv2.THRESH_BINARY)
+    # hsv = in_range1
     # in_range = cv2.cvtColor(in_range, cv2.COLOR_GRAY2RGB)
     # in_range = cv2.cvtColor(in_range, cv2.COLOR_GRAY2RGB)
-    in_range = cv2.inRange(in_range,(0,0,100),(0,0,255))
-    blur = cv2.medianBlur(in_range, 5)
+    in_range2 = cv2.inRange(in_range1,(0,0,100),(0,0,255))
+    blur = cv2.medianBlur(in_range2, 5)
     # cx = 1
     # blur = cv2.blur(in_range,(cx,cx))
     # blur = cv2.GaussianBlur(in_range,(cx,cx),0)
