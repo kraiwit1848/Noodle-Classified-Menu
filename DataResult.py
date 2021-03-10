@@ -70,7 +70,12 @@ def addData_SQLite(AnsData):
     URL = "http://localhost:3000/api/Menu"
 
     MenuId = requests.get(url = URL).json()
-    MenuId = MenuId[ len(MenuId) - 1 ]['MenuId']
+    if len(MenuId) == 0 :
+        MenuId = 0
+    
+    else :
+        MenuId = MenuId[ len(MenuId) - 1 ]['MenuId']
+    
 
     # data = "{ AddMenu: { MenuId: " + str(MenuId) + ", Menu: " + AnsData[0] + ", Spicy: " + str(AnsData[1]) + ", Vegetable: " + str(AnsData[2]) + ", Restaurant: " + str(AnsData[3]) + ", Price: " + str(AnsData[4]) + "}}" 
     data = {'AddMenu':{'MenuId': MenuId + 1 , 'Menu': str(AnsData[0]), 'Spicy': AnsData[1], 'Vegetable': AnsData[2], 'Restaurant': AnsData[3], 'Price': AnsData[4]},'MeNu': { 'use' : 1 },'Today': { 'use' : 1 }}
@@ -79,7 +84,7 @@ def addData_SQLite(AnsData):
 
     # sending post request and saving response as response object
     r = requests.post( url=URL, json = data)
-    print(r)
+    print(r ,"success send data")
 
     # # extracting response text
     # pastebin_url = r.text
