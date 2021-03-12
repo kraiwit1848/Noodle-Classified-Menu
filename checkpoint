@@ -1,2 +1,2 @@
-model_checkpoint_path: "model_weights_binary_000"
-all_model_checkpoint_paths: "model_weights_binary_000"
+model_checkpoint_path: "model_weights_test_LiteO1"
+all_model_checkpoint_paths: "model_weights_test_LiteO1"
