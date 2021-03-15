@@ -31,20 +31,26 @@ def sevenSegment(number):
                 else :
                     segment_state[j][ 3 - i ] = GPIO.LOW
 
-    for k in range(5):
-        for i in range(3):
-            GPIO.output(segment_pin[i][0],GPIO.HIGH)
-            GPIO.output(segment_pin[i][1],GPIO.HIGH)
-            GPIO.output(segment_pin[i][2],GPIO.HIGH)
-            GPIO.output(segment_pin[i][3],GPIO.HIGH)
-        time.sleep(0.2)
+    # for k in range(3):
+    #     for i in range(3):
+    #         GPIO.output(segment_pin[i][0],GPIO.HIGH)
+    #         GPIO.output(segment_pin[i][1],GPIO.HIGH)
+    #         GPIO.output(segment_pin[i][2],GPIO.HIGH)
+    #         GPIO.output(segment_pin[i][3],GPIO.HIGH)
+    #     time.sleep(0.1)
 
-        for i in range(3):
-            GPIO.output(segment_pin[i][0],segment_state[i][0])
-            GPIO.output(segment_pin[i][1],segment_state[i][1])
-            GPIO.output(segment_pin[i][2],segment_state[i][2])
-            GPIO.output(segment_pin[i][3],segment_state[i][3])
-        time.sleep(0.7)
+    #     for i in range(3):
+    #         GPIO.output(segment_pin[i][0],segment_state[i][0])
+    #         GPIO.output(segment_pin[i][1],segment_state[i][1])
+    #         GPIO.output(segment_pin[i][2],segment_state[i][2])
+    #         GPIO.output(segment_pin[i][3],segment_state[i][3])
+    #     time.sleep(0.5)
+    
+    for i in range(3):
+        GPIO.output(segment_pin[i][0],segment_state[i][0])
+        GPIO.output(segment_pin[i][1],segment_state[i][1])
+        GPIO.output(segment_pin[i][2],segment_state[i][2])
+        GPIO.output(segment_pin[i][3],segment_state[i][3])
 
 
     #GPIO.cleanup()
