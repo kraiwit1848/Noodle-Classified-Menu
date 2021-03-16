@@ -9,7 +9,7 @@ from DataResult import addData , addData_SQLite
 # from raspberry_GPIO import sevenSegment           # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 # image = cv2.imread("image_Full_Menu/data20.jpg")
-image = cv2.imread("image_Full_Menu/image_91.jpg")
+image = cv2.imread("image_Full_Menu/image_01.jpg")
 # image = imutils.rotate(image, 180)
 img = find_square(image)
 top = find_top(img)
