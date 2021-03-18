@@ -16,7 +16,7 @@ Set_Pin()
 camera = PiCamera()
 camera.resolution = ( 1984 , 928 )
 Start = 0
-
+print("start")
 while True :
 
     if Start :
@@ -55,7 +55,7 @@ while True :
 
             print(AnsData)
             addData_SQLite(AnsData)  # <<<<<<<<<<<<<<<< 
-            
+
             Start = False
         except:
             Start = True
