@@ -69,25 +69,25 @@ def find_circle(img):
         circles = np.uint16(np.around(circles))
         circles[0] = np.uint16(np.around(sorted(circles[0], key=lambda x: x[0])))
 
-        # row = []
-        # column = [4,3,3,3,2,2,2,3,3]
-        # check_count = 0
-        # for i in range(9):
-        #     row.append([])
-        #     for j in range(column[i]):
-        #         row[i].append(circles[0][check_count])
-        #         check_count += 1
-        #     row[i] = np.uint16(np.around(row[i]))
-        #     row[i] = np.uint16(np.around(sorted(row[i], key=lambda x: x[1])))
+        row = []
+        column = [4,3,3,3,2,2,2,3,3]
+        check_count = 0
+        for i in range(9):
+            row.append([])
+            for j in range(column[i]):
+                row[i].append(circles[0][check_count])
+                check_count += 1
+            row[i] = np.uint16(np.around(row[i]))
+            row[i] = np.uint16(np.around(sorted(row[i], key=lambda x: x[1])))
 
-        # circles_new = [[]]            
-        # for i in range(9):
-        #     for j in range(column[i]):
-        #         circles_new[0].append(row[i][j])
-        # circles_new = np.uint16(np.around(circles_new))
+        circles_new = [[]]            
+        for i in range(9):
+            for j in range(column[i]):
+                circles_new[0].append(row[i][j])
+        circles_new = np.uint16(np.around(circles_new))
 
         # image_number = 0        
-        for i in circles[0,:]:
+        for i in circles_new[0,:]:
         # for i in circles_new[0,:]:
             if img.shape[0]*0.13 < i[1] < img.shape[0]*0.85:
                 count += 1
@@ -104,7 +104,7 @@ def find_circle(img):
                 cv2.circle(img, (i[0], i[1]), i[2], (0, 0, 255), 5)
                 # cv2.imwrite('test_save/data{}.jpg'.format(image_number), ROI)
 
-                cv2.putText(img, str(count) ,(x,y),cv2.FONT_HERSHEY_PLAIN,2,(255,255,0),5)
+                cv2.putText(img, str(count) ,(x,y),cv2.FONT_HERSHEY_PLAIN,2,(0,0,255),5)
                 # image_number += 1
 
 

@@ -59,7 +59,7 @@ for RunLoop in range(100):
 
     print(AnsData)
     
-    before_InsertData = timeit.default_timer() - start_temp  ################################
+    before_InsertData = timeit.default_timer() - start_time  ################################
 
     addData_SQLite(AnsData)  # <<<<<<<<<<<<<<<< 
 

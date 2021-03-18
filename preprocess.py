@@ -1,7 +1,6 @@
 import cv2
 import numpy as np
 import imutils
-# from keras.models import load_model
 
 def find_square(image):
     
@@ -21,7 +20,7 @@ def find_square(image):
             x,y,w,h = cv2.boundingRect(c)
             ROI = image[y:y+h, x:x+w]
             # cv2.rectangle(image, (x, y), (x + w, y + h), (255,0,0), 5)
-    return ROI 
+    return ROI , blur
 
 def find_top(img):
 
@@ -53,9 +52,6 @@ def find_top(img):
 def find_circle(img):
     Binary = BGR_to_Binary_FromPreProcess(img , 1 )
     blur = cv2.medianBlur(Binary, 3)
-    # cx = 1
-    # blur = cv2.blur(in_range,(cx,cx))
-    # blur = cv2.GaussianBlur(in_range,(cx,cx),0)
 
     minDist = 25
     param1 = 25 #500
@@ -87,13 +83,15 @@ def find_circle(img):
             for j in range(column[i]):
                 circles_new[0].append(row[i][j])
         circles_new = np.uint16(np.around(circles_new))
-        
+
+        # image_number = 0        
         for i in circles_new[0,:]:
+        # for i in circles_new[0,:]:
             if img.shape[0]*0.13 < i[1] < img.shape[0]*0.85:
                 count += 1
                 x,y,_ = i
-                x = x - 27
-                y = y - 27
+                x = x - 30
+                y = y - 30
                 ROI = img[y:y+60, x:x+60]
                 ROI = imutils.rotate(ROI, 90)
                 # ROI = cv2.cvtColor(ROI, cv2.COLOR_BGR2GRAY) # <<<<<<<<<<<<<<<<<<<<<<<<============
@@ -103,9 +101,12 @@ def find_circle(img):
                 Circle_data.append(ROI)
                 # cv2.circle(img, (i[0], i[1]), i[2], (0, 0, 255), 5)
                 # cv2.imwrite('test_save/data{}.jpg'.format(image_number), ROI)
-                # cv2.putText(img, str(count) ,(x,y),cv2.FONT_HERSHEY_PLAIN,2,(255,255,0),5)
 
-    return img , Circle_data
+                # cv2.putText(img, str(count) ,(x,y),cv2.FONT_HERSHEY_PLAIN,2,(0,0,255),5)
+                # image_number += 1
+
+
+    return img , Circle_data , blur
 
 def BGR_to_Binary_FromPreProcess(image , mode):
 
@@ -119,7 +120,7 @@ def BGR_to_Binary_FromPreProcess(image , mode):
     gray = cv2.cvtColor(blur, cv2.COLOR_BGR2GRAY)
     BGR = cv2.cvtColor(gray, cv2.COLOR_GRAY2RGB)
     hsv = cv2.cvtColor(BGR, cv2.COLOR_BGR2HSV)
-    _ , in_range1 = cv2.threshold(hsv,80,255,cv2.THRESH_BINARY)
+    _ , in_range1 = cv2.threshold(hsv,100,255,cv2.THRESH_BINARY)
     if mode == 1:
         img_Binary = cv2.inRange(in_range1,(0,0,100),(0,0,255))
     else:
