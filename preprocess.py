@@ -16,11 +16,11 @@ def find_square(image):
     for c in cnts:
         area = cv2.contourArea(c)
         if min_area < area < max_area:     
-            print(area)   
+            # print(area)   
             x,y,w,h = cv2.boundingRect(c)
             ROI = image[y:y+h, x:x+w]
             # cv2.rectangle(image, (x, y), (x + w, y + h), (255,0,0), 5)
-    return ROI , blur
+    return ROI 
 
 def find_top(img):
 
@@ -106,7 +106,7 @@ def find_circle(img):
                 # image_number += 1
 
 
-    return img , Circle_data , blur
+    return img , Circle_data 
 
 def BGR_to_Binary_FromPreProcess(image , mode):
 
