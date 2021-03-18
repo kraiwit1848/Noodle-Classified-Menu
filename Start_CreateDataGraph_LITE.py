@@ -21,55 +21,58 @@ camera = PiCamera()
 camera.resolution = ( 1984 , 928 )
 
 for RunLoop in range(100):
-    start_temp = temp()
-    start_time = timeit.default_timer()
+    try:
+        start_temp = temp()
+        start_time = timeit.default_timer()
 
 
-    # ================ start ============================
-    camera.capture('images/data.jpg')
-    image = cv2.imread("images/data.jpg")
-    img = find_square(image)
-    top = find_top(img)
-    close , Circle_data = find_circle(top)
+        # ================ start ============================
+        camera.capture('images/data.jpg')
+        image = cv2.imread("images/data.jpg")
+        img = find_square(image)
+        top = find_top(img)
+        close , Circle_data = find_circle(top)
 
-    before_predict = timeit.default_timer() - start_time        ################################
+        before_predict = timeit.default_timer() - start_time        ################################
 
-    interpreter = tf.lite.Interpreter(model_path="model_Binary.tflite")
-    interpreter.allocate_tensors()
-    input_details = interpreter.get_input_details()
-    output_details = interpreter.get_output_details()
+        interpreter = tf.lite.Interpreter(model_path="model_Binary.tflite")
+        interpreter.allocate_tensors()
+        input_details = interpreter.get_input_details()
+        output_details = interpreter.get_output_details()
 
-    AnsData = [ "" , 1 , 1 , 1 , 45 ]
+        AnsData = [ "" , 1 , 1 , 1 , 45 ]
 
-    for i in range(25):
+        for i in range(25):
+            
+            CircleD = [ BGR_to_Binary(Circle_data[i]) / 255.]
+            input_data = np.array(CircleD, dtype=np.float32).reshape(1,60,60,1)
+            interpreter.set_tensor(input_details[0]['index'], input_data)
+            interpreter.invoke()
+            w_pred = interpreter.get_tensor(output_details[0]['index'])
+            
+            if np.ndarray.max(w_pred) > 0.4 :
+                check_pred = np.argmax(w_pred)       
+                # print(i+1 ," = " , check_pred,w_pred)
+                if check_pred == 1 or check_pred == 2:
+                    AnsData = addData(i,AnsData)
+            # else:
+                # print(i+1 ," = " , 0 ,w_pred)
+
+        print(AnsData)
         
-        CircleD = [ BGR_to_Binary(Circle_data[i]) / 255.]
-        input_data = np.array(CircleD, dtype=np.float32).reshape(1,60,60,1)
-        interpreter.set_tensor(input_details[0]['index'], input_data)
-        interpreter.invoke()
-        w_pred = interpreter.get_tensor(output_details[0]['index'])
-        
-        if np.ndarray.max(w_pred) > 0.4 :
-            check_pred = np.argmax(w_pred)       
-            # print(i+1 ," = " , check_pred,w_pred)
-            if check_pred == 1 or check_pred == 2:
-                AnsData = addData(i,AnsData)
-        # else:
-            # print(i+1 ," = " , 0 ,w_pred)
+        before_InsertData = timeit.default_timer() - start_time  ################################
 
-    print(AnsData)
-    
-    before_InsertData = timeit.default_timer() - start_time  ################################
+        addData_SQLite(AnsData)  # <<<<<<<<<<<<<<<< 
 
-    addData_SQLite(AnsData)  # <<<<<<<<<<<<<<<< 
+        # ================ end ================================================
 
-    # ================ end ================================================
+        end_temp = temp()
+        RunTime = timeit.default_timer() - start_time
 
-    end_temp = temp()
-    RunTime = timeit.default_timer() - start_time
+        print(str(i) , str(before_predict) , str(before_InsertData) , str(RunTime) , str(end_temp))
 
-    print(str(i) , str(before_predict) , str(before_InsertData) , str(RunTime) , str(end_temp))
-
-    file.write(str(RunLoop + 1) + ","+str(before_predict)+ ","+str(before_InsertData)+ ","+str(RunTime)+ ","+str(start_temp)+ ","+str(end_temp))
+        file.write(str(RunLoop + 1) + ","+str(before_predict)+ ","+str(before_InsertData)+ ","+str(RunTime)+ ","+str(start_temp)+ ","+str(end_temp))
+    except:
+        i = i - 1
 
 file.colse()
