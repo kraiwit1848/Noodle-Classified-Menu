@@ -71,7 +71,7 @@ for RunLoop in range(100):
 
         print(str(RunLoop+1) , str(before_predict) , str(before_InsertData) , str(RunTime) , str(end_temp))
 
-        file.write(str(RunLoop + 1) + ","+str(before_predict)+ ","+str(before_InsertData)+ ","+str(RunTime)+ ","+str(start_temp)+ ","+str(end_temp))
+        file.write(str(RunLoop + 1) + ","+str(before_predict)+ ","+str(before_InsertData)+ ","+str(RunTime)+ ","+str(start_temp)+ ","+str(end_temp) +"\n")
     except:
         i = i - 1
 
