@@ -1,6 +1,6 @@
 import requests
-# import sqlite3
-# import json
+from raspberry_GPIO import sevenSegment
+
 
 def addData(circle_index, AnsData):
     answer = [0, 1, 2, 3, "ต้มยำ", "หม่าล่า", "ต้มยำ", "น้ำใส",
@@ -76,6 +76,7 @@ def addData_SQLite(AnsData):
     else :
         MenuId = MenuId[ len(MenuId) - 1 ]['MenuId']
     
+    sevenSegment(MenuId+1)
 
     # data = "{ AddMenu: { MenuId: " + str(MenuId) + ", Menu: " + AnsData[0] + ", Spicy: " + str(AnsData[1]) + ", Vegetable: " + str(AnsData[2]) + ", Restaurant: " + str(AnsData[3]) + ", Price: " + str(AnsData[4]) + "}}" 
     data = {'AddMenu':{'MenuId': MenuId + 1 , 'Menu': str(AnsData[0]), 'Spicy': AnsData[1], 'Vegetable': AnsData[2], 'Restaurant': AnsData[3], 'Price': AnsData[4]},'MeNu': { 'use' : 1 },'Today': { 'use' : 1 }}
