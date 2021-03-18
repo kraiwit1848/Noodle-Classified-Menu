@@ -50,7 +50,7 @@ for RunLoop in range(100):
             interpreter.invoke()
             w_pred = interpreter.get_tensor(output_details[0]['index'])
             
-            if np.ndarray.max(w_pred) > 0.4 :
+            if np.ndarray.max(w_pred) > 0.75 :
                 check_pred = np.argmax(w_pred)       
                 # print(i+1 ," = " , check_pred,w_pred)
                 if check_pred == 1 or check_pred == 2:
@@ -69,10 +69,10 @@ for RunLoop in range(100):
         end_temp = temp()
         RunTime = timeit.default_timer() - start_time
 
-        print(str(RunLoop) , str(before_predict) , str(before_InsertData) , str(RunTime) , str(end_temp))
+        print(str(RunLoop+1) , str(before_predict) , str(before_InsertData) , str(RunTime) , str(end_temp))
 
         file.write(str(RunLoop + 1) + ","+str(before_predict)+ ","+str(before_InsertData)+ ","+str(RunTime)+ ","+str(start_temp)+ ","+str(end_temp))
     except:
         i = i - 1
 
-file.colse()
+file.close()

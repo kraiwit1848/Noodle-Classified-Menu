@@ -35,10 +35,8 @@ for i in range(25):
     CData = np.expand_dims(CData, axis=0)
     # print(CData)
     w_pred = model.predict(CData)
-    # AnsData[0] = model.predict(Circle_data[i])
-    # print(i+1 ," = " , np.argmax(w_pred),"   ",w_pred)
-    # print(np.ndarray.max(w_pred))
-    if np.ndarray.max(w_pred) > 0.4 :            
+    
+    if np.ndarray.max(w_pred) > 0.8 :            
         check_pred = np.argmax(w_pred) 
         # print(i+1 ," = " , check_pred,w_pred)
         if check_pred == 1 or check_pred == 2:

@@ -5,11 +5,11 @@ import imutils
 # from keras.models import load_model
 from preprocess import find_circle , find_top , find_square , BGR_to_Binary
 # from My_Model import create_model
-from DataResult import addData , addData_SQLite
+# from DataResult import addData , addData_SQLite
 # from raspberry_GPIO import sevenSegment           # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-# image = cv2.imread("image_Full_Menu/data20.jpg")
-image = cv2.imread("image_Full_Menu/image_01.jpg")
+image = cv2.imread("image_Full_Menu/data.jpg")
+# image = cv2.imread("image_Full_Menu/image_01.jpg")
 # image = imutils.rotate(image, 180)
 img = find_square(image)
 top = find_top(img)
@@ -49,19 +49,15 @@ for i in range(25):
 
     w_pred = interpreter.get_tensor(output_details[0]['index'])
 
-    # w_pred = model.predict(Circle_data[i])
-    # check_pred = np.argmax(w_pred)
-
-    # check_pred = np.argmax(output_data)
     
-    if np.ndarray.max(w_pred) > 0.4 :
+    if np.ndarray.max(w_pred) > 0.8 :
         check_pred = np.argmax(w_pred)       
         # print(i+1 ," = " , check_pred,w_pred)
 
-        if check_pred == 1 or check_pred == 2:
-            AnsData = addData(i,AnsData)
+        # if check_pred == 1 or check_pred == 2:
+        #     AnsData = addData(i,AnsData)
     # else:
-        # print(i+1 ," = " , 0 ,w_pred)
+    #     print(i+1 ," = " , 0 ,w_pred)
 
 print(AnsData)
-addData_SQLite(AnsData)  # <<<<<<<<<<<<<<<< 
+# addData_SQLite(AnsData)  # <<<<<<<<<<<<<<<< 

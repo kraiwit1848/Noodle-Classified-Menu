@@ -24,39 +24,42 @@ while True :
             print("start run")
             time.sleep(0.1)
             # ================ start ============================
-            camera.capture('images/data.jpg')
-            image = cv2.imread("images/data.jpg")
-            img = find_square(image)
-            top = find_top(img)
-            close , Circle_data = find_circle(top)
+            while True:
+                camera.capture('images/data.jpg')
+                image = cv2.imread("images/data.jpg")
+                img = find_square(image)
+                top = find_top(img)
+                close , Circle_data = find_circle(top)
 
-            interpreter = tf.lite.Interpreter(model_path="model_Binary.tflite")
-            interpreter.allocate_tensors()
-            input_details = interpreter.get_input_details()
-            output_details = interpreter.get_output_details()
+                interpreter = tf.lite.Interpreter(model_path="model_Binary.tflite")
+                interpreter.allocate_tensors()
+                input_details = interpreter.get_input_details()
+                output_details = interpreter.get_output_details()
 
-            AnsData = [ "" , 1 , 1 , 1 , 45 ]
+                AnsData = [ "" , 1 , 1 , 1 , 45 ]
 
-            for i in range(25):
-                
-                CircleD = [ BGR_to_Binary(Circle_data[i]) / 255.]
-                input_data = np.array(CircleD, dtype=np.float32).reshape(1,60,60,1)
-                interpreter.set_tensor(input_details[0]['index'], input_data)
-                interpreter.invoke()
-                w_pred = interpreter.get_tensor(output_details[0]['index'])
-                
-                if np.ndarray.max(w_pred) > 0.4 :
-                    check_pred = np.argmax(w_pred)       
-                    # print(i+1 ," = " , check_pred,w_pred)
-                    if check_pred == 1 or check_pred == 2:
-                        AnsData = addData(i,AnsData)
-                # else:
-                    # print(i+1 ," = " , 0 ,w_pred)
+                for i in range(25):
+                    
+                    CircleD = [ BGR_to_Binary(Circle_data[i]) / 255.]
+                    input_data = np.array(CircleD, dtype=np.float32).reshape(1,60,60,1)
+                    interpreter.set_tensor(input_details[0]['index'], input_data)
+                    interpreter.invoke()
+                    w_pred = interpreter.get_tensor(output_details[0]['index'])
+                    
+                    if np.ndarray.max(w_pred) > 0.80 :
+                        check_pred = np.argmax(w_pred)       
+                        # print(i+1 ," = " , check_pred,w_pred)
+                        if check_pred == 1 or check_pred == 2:
+                            AnsData = addData(i,AnsData)
+                    else:
+                        Start = True
+                        break
+                        # print(i+1 ," = " , 0 ,w_pred)
 
-            print(AnsData)
-            addData_SQLite(AnsData)  # <<<<<<<<<<<<<<<< 
-
-            Start = False
+                print(AnsData)
+                addData_SQLite(AnsData)  # <<<<<<<<<<<<<<<< 
+                Start = False
+                break
         except:
             Start = True
     else :
