@@ -3,7 +3,7 @@ import numpy as np
 import tensorflow as tf
 import imutils
 # from keras.models import load_model
-from preprocess import find_circle , find_top , find_square
+from preprocess import find_circle , find_top , find_square , BGR_to_Binary
 # from My_Model import create_model
 from DataResult import addData , addData_SQLite
 # from raspberry_GPIO import sevenSegment           # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -27,7 +27,8 @@ close , Circle_data = find_circle(top)
 # # usd check position in answer
     
 # # AnsData = [ Menu , Spicy , Vegetable , Restaurant , Price ]
-interpreter = tf.lite.Interpreter(model_path="model.tflite")
+# interpreter = tf.lite.Interpreter(model_path="model.tflite")
+interpreter = tf.lite.Interpreter(model_path="model_Binary.tflite")
 interpreter.allocate_tensors()
 input_details = interpreter.get_input_details()
 output_details = interpreter.get_output_details()
@@ -37,27 +38,30 @@ AnsData = [ "" , 1 , 1 , 1 , 45 ]
 
 for i in range(25):
     
-    CircleD = [Circle_data[i] / 255.]
+    CircleD = [ BGR_to_Binary(Circle_data[i]) / 255.]
 
     # CircleD = np.expand_dims(CircleD, axis=0)
 
-    input_data = np.array(CircleD, dtype=np.float32)
+    input_data = np.array(CircleD, dtype=np.float32).reshape(1,60,60,1)
+
     interpreter.set_tensor(input_details[0]['index'], input_data)
     interpreter.invoke()
 
-    output_data = interpreter.get_tensor(output_details[0]['index'])
-
+    w_pred = interpreter.get_tensor(output_details[0]['index'])
 
     # w_pred = model.predict(Circle_data[i])
     # check_pred = np.argmax(w_pred)
 
-    check_pred = np.argmax(output_data)
-    # print(i+1 ," = " , check_pred)
+    # check_pred = np.argmax(output_data)
+    
+    if np.ndarray.max(w_pred) > 0.4 :
+        check_pred = np.argmax(w_pred)       
+        # print(i+1 ," = " , check_pred,w_pred)
 
-    # if check_pred == 1 : # version 1 is have 3 classify
-    if check_pred == 1 or check_pred == 2: # version 2 is have 4 classify
-        # print(i+1)
-        AnsData = addData(i,AnsData)
+        if check_pred == 1 or check_pred == 2:
+            AnsData = addData(i,AnsData)
+    # else:
+        # print(i+1 ," = " , 0 ,w_pred)
 
 print(AnsData)
-# addData_SQLite(AnsData)  # <<<<<<<<<<<<<<<< 
+addData_SQLite(AnsData)  # <<<<<<<<<<<<<<<< 

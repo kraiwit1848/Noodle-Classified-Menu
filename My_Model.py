@@ -22,9 +22,9 @@ def create_model(shapeX,shapeY,color):
     dense1 = Dropout(0.7)(dense1)
     dense1 = Dense(256,activation='relu')(dense1)
     dense1 = Dropout(0.5)(dense1)
-    predictedW = Dense(4,activation='sigmoid')(dense1)
+    predictedW = Dense(5,activation='sigmoid')(dense1)
 
     model = Model(inputs=inputIm, outputs=predictedW)
-    model.compile(optimizer = Adam(lr = 1e-4), loss = tensorflow.keras.losses.SparseCategoricalCrossentropy(from_logits=True),metrics = ['accuracy'])
+    model.compile(optimizer = Adam(lr = 1e-4), loss = 'categorical_crossentropy',metrics = ['accuracy'])
 
     return model

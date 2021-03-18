@@ -113,8 +113,8 @@ def find_circle(img):
             if img.shape[0]*0.13 < i[1] < img.shape[0]*0.85:
                 count += 1
                 x,y,_ = i
-                x = x - 30
-                y = y - 30
+                x = x - 27
+                y = y - 27
                 ROI = img[y:y+60, x:x+60]
                 ROI = imutils.rotate(ROI, 90)
                 # ROI = cv2.cvtColor(ROI, cv2.COLOR_BGR2GRAY) # <<<<<<<<<<<<<<<<<<<<<<<<============
@@ -127,3 +127,22 @@ def find_circle(img):
                 # cv2.putText(img, str(count) ,(x,y),cv2.FONT_HERSHEY_PLAIN,2,(255,255,0),5)
 
     return img , Circle_data
+
+def BGR_to_Binary(image):
+    IMAGE_SIZE = (60,60)
+
+    clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8,8))
+    b = clahe.apply(image[:, :, 0])
+    g = clahe.apply(image[:, :, 1])
+    r = clahe.apply(image[:, :, 2])
+    equalized = np.dstack((b, g, r))
+    blur = cv2.medianBlur(equalized, 3)
+
+    gray = cv2.cvtColor(blur, cv2.COLOR_BGR2GRAY)
+    BGR = cv2.cvtColor(gray, cv2.COLOR_GRAY2RGB)
+    hsv = cv2.cvtColor(BGR, cv2.COLOR_BGR2HSV)
+    _ , in_range1 = cv2.threshold(hsv,80,255,cv2.THRESH_BINARY)
+    img_Binary = cv2.inRange(in_range1,(0,0,100),(0,0,255))
+
+    img_Binary = cv2.resize(img_Binary,IMAGE_SIZE)
+    return img_Binary
