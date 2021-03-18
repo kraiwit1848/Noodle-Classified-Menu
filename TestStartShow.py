@@ -1,8 +1,8 @@
 import cv2
 import numpy as np
 import imutils
+from picamera import PiCamera
 # from keras.models import load_model
-# from picamera import PiCamera
 
 
 def find_square(image):
@@ -13,7 +13,7 @@ def find_square(image):
     # close = Mask_IMG(image)    
     cnts = cv2.findContours(blur, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     cnts = cnts[0] if len(cnts) == 2 else cnts[1]
-    min_area = 300000
+    min_area = 500000
     max_area = 1500000
     # min_area = 100
     for c in cnts:
@@ -131,12 +131,12 @@ def BGR_to_Binary_FromPreProcess(image , mode):
 
     return img_Binary
 
-# camera = PiCamera()
-# camera.resolution = ( 1984 , 928 )
-# camera.capture('images/data.jpg')
-# image = cv2.imread("images/data.jpg")
+camera = PiCamera()
+camera.resolution = ( 1984 , 928 )
+camera.capture('images/data.jpg')
+image = cv2.imread("images/data.jpg")
 
-image = cv2.imread("image_Full_Menu/data.jpg")
+# image = cv2.imread("image_Full_Menu/data.jpg")
 # image = cv2.imread("image_Full_Menu/image_01.jpg")
 
 img , square_blur = find_square(image)
@@ -147,8 +147,8 @@ TARGET_SIZE = (int(1984/2),int(928/2))
 # TARGET_SIZE = (992,464)
 
 # # use in_range1 for check 25 circle
-top = cv2.resize(top,TARGET_SIZE)
-cv2.imshow('top', top)
+# top = cv2.resize(top,TARGET_SIZE)
+# cv2.imshow('top', top)
 
 image = cv2.resize(image,TARGET_SIZE)
 cv2.imshow('image', image)
