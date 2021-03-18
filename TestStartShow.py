@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 import imutils
 # from keras.models import load_model
-
+from picamera import PiCamera
 
 
 def find_square(image):
@@ -94,25 +94,25 @@ def find_circle(img):
         circles = np.uint16(np.around(circles))
         circles[0] = np.uint16(np.around(sorted(circles[0], key=lambda x: x[0])))
 
-        row = []
-        column = [4,3,3,3,2,2,2,3,3]
-        check_count = 0
-        for i in range(9):
-            row.append([])
-            for j in range(column[i]):
-                row[i].append(circles[0][check_count])
-                check_count += 1
-            row[i] = np.uint16(np.around(row[i]))
-            row[i] = np.uint16(np.around(sorted(row[i], key=lambda x: x[1])))
+        # row = []
+        # column = [4,3,3,3,2,2,2,3,3]
+        # check_count = 0
+        # for i in range(9):
+        #     row.append([])
+        #     for j in range(column[i]):
+        #         row[i].append(circles[0][check_count])
+        #         check_count += 1
+        #     row[i] = np.uint16(np.around(row[i]))
+        #     row[i] = np.uint16(np.around(sorted(row[i], key=lambda x: x[1])))
 
-        circles_new = [[]]            
-        for i in range(9):
-            for j in range(column[i]):
-                circles_new[0].append(row[i][j])
-        circles_new = np.uint16(np.around(circles_new))
+        # circles_new = [[]]            
+        # for i in range(9):
+        #     for j in range(column[i]):
+        #         circles_new[0].append(row[i][j])
+        # circles_new = np.uint16(np.around(circles_new))
 
         # image_number = 0        
-        for i in circles_new[0,:]:
+        for i in circles[0,:]:
         # for i in circles_new[0,:]:
             if img.shape[0]*0.13 < i[1] < img.shape[0]*0.85:
                 count += 1
@@ -135,9 +135,11 @@ def find_circle(img):
 
     return img , Circle_data , [in_range1,in_range2] , hsv
 
+camera = PiCamera()
+camera.resolution = ( 1984 , 928 )
 
-
-image = cv2.imread("image_Full_Menu/image_01.jpg")
+camera.capture('images/data.jpg')
+image = cv2.imread("images/data.jpg")
 
 img = find_square(image)
 top  = find_top(img)

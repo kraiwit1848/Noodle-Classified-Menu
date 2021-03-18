@@ -14,7 +14,7 @@ from raspberry_GPIO import Motion_sensor , Set_Pin
 def temp():
     temp = os.popen("vcgencmd measure_temp").readline()
     return (temp.replace("temp=","").replace("'C",""))
-file = open("Data_test_Lite.txt","w")
+file = open("Data_test_Full.txt","w")
 
 Set_Pin()
 camera = PiCamera()
