@@ -2,50 +2,38 @@ import cv2
 import numpy as np
 import imutils
 # from keras.models import load_model
-from picamera import PiCamera
+# from picamera import PiCamera
 
 
 def find_square(image):
-    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    BGR = cv2.cvtColor(gray, cv2.COLOR_GRAY2RGB)
-    hsv = cv2.cvtColor(BGR, cv2.COLOR_BGR2HSV)
-    _ , in_range = cv2.threshold(hsv,75,255,cv2.THRESH_BINARY)
-    # in_range = cv2.cvtColor(in_range, cv2.COLOR_GRAY2RGB)
-    # in_range = cv2.cvtColor(in_range, cv2.COLOR_GRAY2RGB)
-    new_in_range = cv2.inRange(in_range,(0,0,100),(0,0,255))
-    blur = cv2.medianBlur(new_in_range, 3)
+    
+    Binary = BGR_to_Binary_FromPreProcess(image , 1)    
+    blur = cv2.medianBlur(Binary, 3)
 
     # close = Mask_IMG(image)    
-    cnts = cv2.findContours(blur, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    cnts = cv2.findContours(blur, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     cnts = cnts[0] if len(cnts) == 2 else cnts[1]
-    min_area = 500000
-    max_area = 2000000
+    min_area = 10000
+    max_area = 1500000
     # min_area = 100
     for c in cnts:
         area = cv2.contourArea(c)
-        if min_area < area < max_area:        
+        if min_area < area < max_area:     
+            print(area)   
             x,y,w,h = cv2.boundingRect(c)
             ROI = image[y:y+h, x:x+w]
-            cv2.rectangle(image, (x, y), (x + w, y + h), (0,0,255), 5)
-    return ROI
+            cv2.rectangle(image, (x, y), (x + w, y + h), (255,0,0), 5)
+    return ROI , blur
 
-def find_top(img,):
-    # gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    # BGR = cv2.cvtColor(gray, cv2.COLOR_GRAY2RGB)
-    hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-    _ , in_range = cv2.threshold(hsv,80,255,cv2.THRESH_BINARY)
-    # in_range = cv2.cvtColor(in_range, cv2.COLOR_GRAY2RGB)
-    # in_range = cv2.cvtColor(in_range, cv2.COLOR_GRAY2RGB)
-    new_in_range = cv2.inRange(in_range,(0,100,0),(0,255,0))
-    blur = cv2.medianBlur(new_in_range, 3)
+def find_top(img):
 
-    # hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-    # img_rag = cv2.inRange(hsv,(70,100,1),(90,245,60))
+    Binary = BGR_to_Binary_FromPreProcess(img , 2)
+    blur = cv2.medianBlur(Binary, 15)
 
-    cnts = cv2.findContours(blur, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    cnts = cv2.findContours(blur, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     cnts = cnts[0] if len(cnts) == 2 else cnts[1]
     min_area = 3000
-    max_area = 6000
+    max_area = 25000
     check_top = 0
     for c in cnts:
         area = cv2.contourArea(c)
@@ -54,7 +42,7 @@ def find_top(img,):
             # print(area)           
             x,y,w,h = cv2.boundingRect(c)
             # ROI = img[y:y+h, x:x+w]
-            cv2.rectangle(img, (x, y), (x + w, y + h), (0,0,255), 5)
+            cv2.rectangle(img, (x, y), (x + w, y + h), (0,255,0), 5)
             if ( x < img.shape[1] * 0.25  and y > img.shape[0] * 0.5 )or ( x > img.shape[1] * 0.75 and y < img.shape[0] * 0.5 ) :
                 check_top = x
     # print(x,y,img.shape)
@@ -65,20 +53,8 @@ def find_top(img,):
     return img 
 
 def find_circle(img):
-        
-    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    BGR = cv2.cvtColor(gray, cv2.COLOR_GRAY2RGB)
-    hsv = cv2.cvtColor(BGR, cv2.COLOR_BGR2HSV)
-    # _ , in_range1 = cv2.threshold(hsv,73,255,cv2.THRESH_BINARY)
-    _ , in_range1 = cv2.threshold(hsv,67,255,cv2.THRESH_BINARY)
-    # hsv = in_range1
-    # in_range = cv2.cvtColor(in_range, cv2.COLOR_GRAY2RGB)
-    # in_range = cv2.cvtColor(in_range, cv2.COLOR_GRAY2RGB)
-    in_range2 = cv2.inRange(in_range1,(0,0,100),(0,0,255))
-    blur = cv2.medianBlur(in_range2, 5)
-    # cx = 1
-    # blur = cv2.blur(in_range,(cx,cx))
-    # blur = cv2.GaussianBlur(in_range,(cx,cx),0)
+    Binary = BGR_to_Binary_FromPreProcess(img , 1 )
+    blur = cv2.medianBlur(Binary, 3)
 
     minDist = 25
     param1 = 25 #500
@@ -133,32 +109,54 @@ def find_circle(img):
                 # image_number += 1
 
 
-    return img , Circle_data , [in_range1,in_range2] , hsv
+    return img , Circle_data , blur
 
-camera = PiCamera()
-camera.resolution = ( 1984 , 928 )
+def BGR_to_Binary_FromPreProcess(image , mode):
 
-camera.capture('images/data.jpg')
-image = cv2.imread("images/data.jpg")
+    clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8,8))
+    b = clahe.apply(image[:, :, 0])
+    g = clahe.apply(image[:, :, 1])
+    r = clahe.apply(image[:, :, 2])
+    equalized = np.dstack((b, g, r))
+    blur = cv2.medianBlur(equalized, 3)
 
-img = find_square(image)
-top  = find_top(img)
-close , Circle_data , in_range , hsv = find_circle(top)
+    gray = cv2.cvtColor(blur, cv2.COLOR_BGR2GRAY)
+    BGR = cv2.cvtColor(gray, cv2.COLOR_GRAY2RGB)
+    hsv = cv2.cvtColor(BGR, cv2.COLOR_BGR2HSV)
+    _ , in_range1 = cv2.threshold(hsv,80,255,cv2.THRESH_BINARY)
+    if mode == 1:
+        img_Binary = cv2.inRange(in_range1,(0,0,100),(0,0,255))
+    else:
+        img_Binary = cv2.inRange(in_range1,(0,0,0),(0,0,100))
+
+    return img_Binary
+
+# camera = PiCamera()
+# camera.resolution = ( 1984 , 928 )
+# camera.capture('images/data.jpg')
+# image = cv2.imread("images/data.jpg")
+
+image = cv2.imread("image_Full_Menu/data.jpg")
+# image = cv2.imread("image_Full_Menu/image_01.jpg")
+
+img , square_blur = find_square(image)
+top = find_top(img)
+close , Circle_data , circle_blur = find_circle(top)
 
 TARGET_SIZE = (int(1984/2),int(928/2))
 # TARGET_SIZE = (992,464)
 
 # # use in_range1 for check 25 circle
-inRange1 = cv2.resize(in_range[1],TARGET_SIZE)
-cv2.imshow('in_range1', inRange1)
+top = cv2.resize(top,TARGET_SIZE)
+cv2.imshow('top', top)
 
 image = cv2.resize(image,TARGET_SIZE)
 cv2.imshow('image', image)
 
-img = cv2.resize(img,TARGET_SIZE)
-cv2.imshow('img', img)
+# img = cv2.resize(img,TARGET_SIZE)
+# cv2.imshow('img', img)
 
-hsv = cv2.resize(hsv,TARGET_SIZE)
-cv2.imshow('hsv', hsv)
+# square_blur = cv2.resize(square_blur,TARGET_SIZE)
+# cv2.imshow('square_blur', square_blur)
 
 cv2.waitKey()

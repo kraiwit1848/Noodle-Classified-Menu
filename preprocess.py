@@ -4,46 +4,34 @@ import imutils
 # from keras.models import load_model
 
 def find_square(image):
-    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    BGR = cv2.cvtColor(gray, cv2.COLOR_GRAY2RGB)
-    hsv = cv2.cvtColor(BGR, cv2.COLOR_BGR2HSV)
-    _ , in_range = cv2.threshold(hsv,75,255,cv2.THRESH_BINARY)
-    # in_range = cv2.cvtColor(in_range, cv2.COLOR_GRAY2RGB)
-    # in_range = cv2.cvtColor(in_range, cv2.COLOR_GRAY2RGB)
-    new_in_range = cv2.inRange(in_range,(0,0,100),(0,0,255))
-    blur = cv2.medianBlur(new_in_range, 3)
+    
+    Binary = BGR_to_Binary_FromPreProcess(image , 1)    
+    blur = cv2.medianBlur(Binary, 3)
 
     # close = Mask_IMG(image)    
-    cnts = cv2.findContours(blur, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    cnts = cv2.findContours(blur, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     cnts = cnts[0] if len(cnts) == 2 else cnts[1]
-    min_area = 500000
-    max_area = 2000000
+    min_area = 10000
+    max_area = 1500000
     # min_area = 100
     for c in cnts:
         area = cv2.contourArea(c)
-        if min_area < area < max_area:        
+        if min_area < area < max_area:     
+            print(area)   
             x,y,w,h = cv2.boundingRect(c)
             ROI = image[y:y+h, x:x+w]
-            # cv2.rectangle(image, (x, y), (x + w, y + h), (0,0,255), 5)
-    return ROI
+            # cv2.rectangle(image, (x, y), (x + w, y + h), (255,0,0), 5)
+    return ROI 
 
-def find_top(img,):
-    # gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    # BGR = cv2.cvtColor(gray, cv2.COLOR_GRAY2RGB)
-    hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-    _ , in_range = cv2.threshold(hsv,80,255,cv2.THRESH_BINARY)
-    # in_range = cv2.cvtColor(in_range, cv2.COLOR_GRAY2RGB)
-    # in_range = cv2.cvtColor(in_range, cv2.COLOR_GRAY2RGB)
-    new_in_range = cv2.inRange(in_range,(0,100,0),(0,255,0))
-    blur = cv2.medianBlur(new_in_range, 3)
+def find_top(img):
 
-    # hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-    # img_rag = cv2.inRange(hsv,(70,100,1),(90,245,60))
+    Binary = BGR_to_Binary_FromPreProcess(img , 2)
+    blur = cv2.medianBlur(Binary, 15)
 
-    cnts = cv2.findContours(blur, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    cnts = cv2.findContours(blur, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     cnts = cnts[0] if len(cnts) == 2 else cnts[1]
     min_area = 3000
-    max_area = 6000
+    max_area = 25000
     check_top = 0
     for c in cnts:
         area = cv2.contourArea(c)
@@ -52,7 +40,7 @@ def find_top(img,):
             # print(area)           
             x,y,w,h = cv2.boundingRect(c)
             # ROI = img[y:y+h, x:x+w]
-            # cv2.rectangle(img, (x, y), (x + w, y + h), (0,0,255), 5)
+            # cv2.rectangle(img, (x, y), (x + w, y + h), (0,255,0), 5)
             if ( x < img.shape[1] * 0.25  and y > img.shape[0] * 0.5 )or ( x > img.shape[1] * 0.75 and y < img.shape[0] * 0.5 ) :
                 check_top = x
     # print(x,y,img.shape)
@@ -63,17 +51,8 @@ def find_top(img,):
     return img 
 
 def find_circle(img):
-        
-    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    BGR = cv2.cvtColor(gray, cv2.COLOR_GRAY2RGB)
-    hsv = cv2.cvtColor(BGR, cv2.COLOR_BGR2HSV)
-    # _ , in_range1 = cv2.threshold(hsv,73,255,cv2.THRESH_BINARY)
-    _ , in_range1 = cv2.threshold(hsv,67,255,cv2.THRESH_BINARY)
-    # hsv = in_range1
-    # in_range = cv2.cvtColor(in_range, cv2.COLOR_GRAY2RGB)
-    # in_range = cv2.cvtColor(in_range, cv2.COLOR_GRAY2RGB)
-    in_range2 = cv2.inRange(in_range1,(0,0,100),(0,0,255))
-    blur = cv2.medianBlur(in_range2, 5)
+    Binary = BGR_to_Binary_FromPreProcess(img , 1 )
+    blur = cv2.medianBlur(Binary, 3)
     # cx = 1
     # blur = cv2.blur(in_range,(cx,cx))
     # blur = cv2.GaussianBlur(in_range,(cx,cx),0)
@@ -127,6 +106,26 @@ def find_circle(img):
                 # cv2.putText(img, str(count) ,(x,y),cv2.FONT_HERSHEY_PLAIN,2,(255,255,0),5)
 
     return img , Circle_data
+
+def BGR_to_Binary(image , mode):
+
+    clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8,8))
+    b = clahe.apply(image[:, :, 0])
+    g = clahe.apply(image[:, :, 1])
+    r = clahe.apply(image[:, :, 2])
+    equalized = np.dstack((b, g, r))
+    blur = cv2.medianBlur(equalized, 3)
+
+    gray = cv2.cvtColor(blur, cv2.COLOR_BGR2GRAY)
+    BGR = cv2.cvtColor(gray, cv2.COLOR_GRAY2RGB)
+    hsv = cv2.cvtColor(BGR, cv2.COLOR_BGR2HSV)
+    _ , in_range1 = cv2.threshold(hsv,80,255,cv2.THRESH_BINARY)
+    if mode == 1:
+        img_Binary = cv2.inRange(in_range1,(0,0,100),(0,0,255))
+    else:
+        img_Binary = cv2.inRange(in_range1,(0,0,0),(0,0,100))
+
+    return img_Binary
 
 def BGR_to_Binary(image):
     IMAGE_SIZE = (60,60)
