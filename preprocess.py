@@ -11,8 +11,8 @@ def find_square(image):
     # close = Mask_IMG(image)    
     cnts = cv2.findContours(blur, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     cnts = cnts[0] if len(cnts) == 2 else cnts[1]
-    min_area = 500000
-    max_area = 1500000
+    min_area = ( blur.shape[0] * blur.shape[1] ) * 0.6
+    max_area = ( blur.shape[0] * blur.shape[1] ) * 0.93
     # min_area = 100
     for c in cnts:
         area = cv2.contourArea(c)

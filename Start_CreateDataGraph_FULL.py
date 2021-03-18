@@ -32,7 +32,7 @@ for RunLoop in range(100):
     top = find_top(img)
     close , Circle_data = find_circle(top)
 
-    before_predict = timeit.default_timer() - start_temp        ################################
+    before_predict = timeit.default_timer() - start_time        ################################
 
     model = create_model( 60 , 60 , 1 )
     model.load_weights('WeightModel')

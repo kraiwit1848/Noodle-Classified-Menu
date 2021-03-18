@@ -1,8 +1,7 @@
 import cv2
 import numpy as np
 import imutils
-from picamera import PiCamera
-# from keras.models import load_model
+# from picamera import PiCamera
 
 
 def find_square(image):
@@ -13,8 +12,8 @@ def find_square(image):
     # close = Mask_IMG(image)    
     cnts = cv2.findContours(blur, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     cnts = cnts[0] if len(cnts) == 2 else cnts[1]
-    min_area = 500000
-    max_area = 1500000
+    min_area = ( blur.shape[0] * blur.shape[1] ) * 0.6
+    max_area = ( blur.shape[0] * blur.shape[1] ) * 0.93
     # min_area = 100
     for c in cnts:
         area = cv2.contourArea(c)
@@ -123,7 +122,7 @@ def BGR_to_Binary_FromPreProcess(image , mode):
     gray = cv2.cvtColor(blur, cv2.COLOR_BGR2GRAY)
     BGR = cv2.cvtColor(gray, cv2.COLOR_GRAY2RGB)
     hsv = cv2.cvtColor(BGR, cv2.COLOR_BGR2HSV)
-    _ , in_range1 = cv2.threshold(hsv,80,255,cv2.THRESH_BINARY)
+    _ , in_range1 = cv2.threshold(hsv,100,255,cv2.THRESH_BINARY)
     if mode == 1:
         img_Binary = cv2.inRange(in_range1,(0,0,100),(0,0,255))
     else:
@@ -131,12 +130,12 @@ def BGR_to_Binary_FromPreProcess(image , mode):
 
     return img_Binary
 
-camera = PiCamera()
-camera.resolution = ( 1984 , 928 )
-camera.capture('images/data.jpg')
-image = cv2.imread("images/data.jpg")
+# camera = PiCamera()
+# camera.resolution = ( 1984 , 928 )
+# camera.capture('images/data.jpg')
+# image = cv2.imread("images/data.jpg")
 
-# image = cv2.imread("image_Full_Menu/data.jpg")
+image = cv2.imread("image_Full_Menu/data.jpg")
 # image = cv2.imread("image_Full_Menu/image_01.jpg")
 
 img , square_blur = find_square(image)
@@ -147,8 +146,8 @@ TARGET_SIZE = (int(1984/2),int(928/2))
 # TARGET_SIZE = (992,464)
 
 # # use in_range1 for check 25 circle
-# top = cv2.resize(top,TARGET_SIZE)
-# cv2.imshow('top', top)
+top = cv2.resize(top,TARGET_SIZE)
+cv2.imshow('top', top)
 
 image = cv2.resize(image,TARGET_SIZE)
 cv2.imshow('image', image)
@@ -156,7 +155,7 @@ cv2.imshow('image', image)
 # img = cv2.resize(img,TARGET_SIZE)
 # cv2.imshow('img', img)
 
-# square_blur = cv2.resize(square_blur,TARGET_SIZE)
-# cv2.imshow('square_blur', square_blur)
+square_blur = cv2.resize(square_blur,TARGET_SIZE)
+cv2.imshow('square_blur', square_blur)
 
 cv2.waitKey()
