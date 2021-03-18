@@ -53,7 +53,7 @@ def find_top(img):
 
 def find_circle(img):
     Binary = BGR_to_Binary_FromPreProcess(img , 1 )
-    blur = cv2.medianBlur(Binary, 3)
+    blur = cv2.medianBlur(Binary, 5)
 
     minDist = 25
     param1 = 25 #500
@@ -122,7 +122,7 @@ def BGR_to_Binary_FromPreProcess(image , mode):
     gray = cv2.cvtColor(blur, cv2.COLOR_BGR2GRAY)
     BGR = cv2.cvtColor(gray, cv2.COLOR_GRAY2RGB)
     hsv = cv2.cvtColor(BGR, cv2.COLOR_BGR2HSV)
-    _ , in_range1 = cv2.threshold(hsv,100,255,cv2.THRESH_BINARY)
+    _ , in_range1 = cv2.threshold(hsv,90,255,cv2.THRESH_BINARY)
     if mode == 1:
         img_Binary = cv2.inRange(in_range1,(0,0,100),(0,0,255))
     else:
