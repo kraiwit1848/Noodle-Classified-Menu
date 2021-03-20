@@ -56,11 +56,14 @@ while True :
                     else:  
                         Start = 55
                         check_Menu = 0                  
+                        break
                         # print(i+1 ," = " , 0 ,w_pred)
 
                 print(AnsData)
                 addData_SQLite(AnsData)  # <<<<<<<<<<<<<<<< 
-                
+                Start = 0
+                check_Menu = 1
+                break                
 
         except:
             Start = 55
