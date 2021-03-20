@@ -21,6 +21,9 @@ def Set_Pin():
     # motion sensor
     GPIO.setup(12,GPIO.IN)
 
+    # range sensor
+    GPIO.setup(18,GPIO.IN)
+
 
 def sevenSegment(number):
     segment3 = int(( number % 100 ) % 10)
@@ -77,4 +80,8 @@ def sevenSegment(number):
 def Motion_sensor():
     
     inPut = GPIO.input(12)
+    return inPut
+
+def range_sensor():
+    inPut = GPIO.input(18)
     return inPut
