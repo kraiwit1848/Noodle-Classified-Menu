@@ -21,7 +21,7 @@ print("start")
 while True :
     time.sleep(0.2)
 
-    if Start >= 6 and  check_Menu == 0:
+    if Start == 1 and  check_Menu == 0:
         try :
             while True:
                 print("start run")
@@ -54,7 +54,7 @@ while True :
                         if check_pred == 1 or check_pred == 2:
                             AnsData = addData(i,AnsData)
                     else:  
-                        Start = 55
+                        Start = 1
                         check_Menu = 0                  
                         break
                         # print(i+1 ," = " , 0 ,w_pred)
@@ -66,13 +66,16 @@ while True :
                 break                
 
         except:
-            Start = 55
+            Start = 1
             check_Menu = 0
+            
     else :
         check_Menu = range_sensor()
-        if Motion_sensor() == 1:
-            Start += 1
-        else:
-            Start = 0
+        Start = Motion_sensor()
+
+    #     if Motion_sensor() == 1:
+    #         Start += 1
+    #     else:
+    #         Start = 0
 
     # ================ end ================================================
