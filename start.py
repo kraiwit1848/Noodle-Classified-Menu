@@ -8,7 +8,7 @@ import os
 # from My_Model import create_model
 # from keras.models import load_model
 from picamera import PiCamera
-from preprocess import find_circle , find_top , find_square , BGR_to_Binary
+from preprocess import find_circle , find_top , find_square , BGR_to_Binary , BGR_to_Binary_FromPreProcess
 from DataResult import addData , addData_SQLite
 from raspberry_GPIO import Motion_sensor , Set_Pin ,range_sensor
 
@@ -29,7 +29,9 @@ while True :
                 # ================ start ============================                        
                 camera.capture('images/data.jpg')
                 image = cv2.imread("images/data.jpg")
-                img = find_square(image)
+                BinaryImg = BGR_to_Binary_FromPreProcess(image)
+                
+                img = find_square(BinaryImg)
                 top = find_top(img)
                 close , Circle_data = find_circle(top)
 

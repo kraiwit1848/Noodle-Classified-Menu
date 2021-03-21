@@ -6,8 +6,9 @@ import imutils
 
 def find_square(image):
     
-    Binary = BGR_to_Binary_FromPreProcess(image , 1)    
-    blur = cv2.medianBlur(Binary, 3)
+    # Binary = BGR_to_Binary_FromPreProcess(image , 1)    
+    # blur = cv2.medianBlur(Binary, 3)
+    blur = cv2.medianBlur(image, 3)
 
     # close = Mask_IMG(image)    
     cnts = cv2.findContours(blur, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
@@ -26,8 +27,9 @@ def find_square(image):
 
 def find_top(img):
 
-    Binary = BGR_to_Binary_FromPreProcess(img , 2)
-    blur = cv2.medianBlur(Binary, 15)
+    # Binary = BGR_to_Binary_FromPreProcess(img , 2)
+    # blur = cv2.medianBlur(Binary, 15)
+    blur = cv2.medianBlur(img, 15)
 
     cnts = cv2.findContours(blur, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     cnts = cnts[0] if len(cnts) == 2 else cnts[1]
@@ -52,8 +54,9 @@ def find_top(img):
     return img 
 
 def find_circle(img):
-    Binary = BGR_to_Binary_FromPreProcess(img , 1 )
-    blur = cv2.medianBlur(Binary, 5)
+    # Binary = BGR_to_Binary_FromPreProcess(img , 1 )
+    # blur = cv2.medianBlur(Binary, 5)
+    blur = cv2.medianBlur(img, 5)
 
     minDist = 25
     param1 = 25 #500
@@ -110,7 +113,7 @@ def find_circle(img):
 
     return img , Circle_data , blur
 
-def BGR_to_Binary_FromPreProcess(image , mode):
+def BGR_to_Binary_FromPreProcess(image ):
 
     clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8,8))
     b = clahe.apply(image[:, :, 0])
@@ -123,10 +126,7 @@ def BGR_to_Binary_FromPreProcess(image , mode):
     BGR = cv2.cvtColor(gray, cv2.COLOR_GRAY2RGB)
     hsv = cv2.cvtColor(BGR, cv2.COLOR_BGR2HSV)
     _ , in_range1 = cv2.threshold(hsv,90,255,cv2.THRESH_BINARY)
-    if mode == 1:
-        img_Binary = cv2.inRange(in_range1,(0,0,100),(0,0,255))
-    else:
-        img_Binary = cv2.inRange(in_range1,(0,0,0),(0,0,100))
+    img_Binary = cv2.inRange(in_range1,(0,0,100),(0,0,255))
 
     return img_Binary
 
@@ -137,14 +137,14 @@ def BGR_to_Binary_FromPreProcess(image , mode):
 
 image = cv2.imread("image_Full_Menu/data.jpg")
 # image = cv2.imread("image_Full_Menu/image_01.jpg")
-
-img , square_blur = find_square(image)
+images = BGR_to_Binary_FromPreProcess(image)
+img , square_blur = find_square(images)
 top = find_top(img)
 close , Circle_data , circle_blur = find_circle(top)
 
 TARGET_SIZE = (int(1984/2),int(928/2))
 # TARGET_SIZE = (992,464)
-
+print(len(Circle_data))
 # # use in_range1 for check 25 circle
 top = cv2.resize(top,TARGET_SIZE)
 cv2.imshow('top', top)
