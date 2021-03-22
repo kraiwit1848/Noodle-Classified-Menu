@@ -11,3 +11,4 @@ test_save*
 model_weights_*
 DataMenu.sqlite
 Data_ANS_*
+Binary_Circle/

@@ -4,9 +4,9 @@ import imutils
 
 def find_square(image):
     
-    # Binary = BGR_to_Binary_FromPreProcess(image , 1)    
-    # blur = cv2.medianBlur(Binary, 3)
-    blur = cv2.medianBlur(image, 3)
+    Binary = BGR_to_Binary_FromPreProcess(image , 1)    
+    blur = cv2.medianBlur(Binary, 3)
+    # blur = cv2.medianBlur(image, 3)
 
     # close = Mask_IMG(image)    
     cnts = cv2.findContours(blur, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
@@ -25,9 +25,9 @@ def find_square(image):
 
 def find_top(img):
 
-    # Binary = BGR_to_Binary_FromPreProcess(img , 2)
-    # blur = cv2.medianBlur(Binary, 15)
-    blur = cv2.medianBlur(img, 15)
+    Binary = BGR_to_Binary_FromPreProcess(img , 2)
+    blur = cv2.medianBlur(Binary, 15)
+    # blur = cv2.medianBlur(img, 15)
 
     cnts = cv2.findContours(blur, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     cnts = cnts[0] if len(cnts) == 2 else cnts[1]
@@ -52,9 +52,9 @@ def find_top(img):
     return img 
 
 def find_circle(img):
-    # Binary = BGR_to_Binary_FromPreProcess(img , 1 )
-    # blur = cv2.medianBlur(Binary, 5)
-    blur = cv2.medianBlur(img, 5)
+    Binary = BGR_to_Binary_FromPreProcess(img , 1 )
+    blur = cv2.medianBlur(Binary, 5)
+    # blur = cv2.medianBlur(img, 5)
 
     minDist = 25
     param1 = 25 #500
@@ -111,7 +111,7 @@ def find_circle(img):
 
     return img , Circle_data 
 
-def BGR_to_Binary_FromPreProcess(image):
+def BGR_to_Binary_FromPreProcess(image ,mode):
     
     clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8,8))
     b = clahe.apply(image[:, :, 0])
@@ -124,7 +124,11 @@ def BGR_to_Binary_FromPreProcess(image):
     BGR = cv2.cvtColor(gray, cv2.COLOR_GRAY2RGB)
     hsv = cv2.cvtColor(BGR, cv2.COLOR_BGR2HSV)
     _ , in_range1 = cv2.threshold(hsv,90,255,cv2.THRESH_BINARY)
-    img_Binary = cv2.inRange(in_range1,(0,0,100),(0,0,255))
+    if mode == 1:
+        img_Binary = cv2.inRange(in_range1,(0,0,100),(0,0,255))
+    else :
+        img_Binary = cv2.inRange(in_range1,(0,0,0),(0,0,100))
+
 
     return img_Binary
 
