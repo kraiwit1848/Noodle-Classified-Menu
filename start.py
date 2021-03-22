@@ -58,9 +58,14 @@ while True :
                     # print(i+1 ," = " , 0 ,w_pred)
 
             print(AnsData)
-            addData_SQLite(AnsData)  # <<<<<<<<<<<<<<<< 
-            Start = 0
-            check_Menu = 1      
+            if AnsData[0] == "":
+                Start = 1
+                check_Menu = 0
+
+            else:
+                addData_SQLite(AnsData)  # <<<<<<<<<<<<<<<< 
+                Start = 0
+                check_Menu = 1      
 
         except:
             Start = 1
